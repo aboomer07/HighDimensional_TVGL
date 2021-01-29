@@ -82,34 +82,34 @@
 
 \frame{\titlepage}
     
-\begin{frame}{Introduction}
+\begin{frame}{Introduction to Graphs}
     \begin{itemize}
-        \item First Slide
+        \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
+        \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
+        \item Graphs can also be thought of in terms of Markov chains, and some of the properties and representations of Markov Chains apply to graphs as well
+        \item For example, the edge set of a graph can be represented as a Markov transition matrix. For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
+        \[\begin{bmatrix} W_{(a, a)} & W_{(a, b)} \\
+           W_{(b, a)} & W_{(b, b)} \end{bmatrix}\]
     \end{itemize}
 \end{frame}
 
-% \begin{frame}[fragile]{Implementation of Integrity Constraints}
-%     \small
-%     Cross-table constraints have been implemented via so-called trigger functions.
-%     For example the constraint \textit{The funded amount cannot be greater than the maximum amount per action of a funding program}
-%     was implemented as:
-%     \begin{lstlisting}[language=SQL]
-%     CREATE TRIGGER amount_check
-%     BEFORE INSERT ON ACTIONFUND
-%     WHEN NEW.AMOUNT > (
-%     SELECT DISTINCT FUNDING.MAXAMOUNT
-%     FROM FUNDING, ACTIONFUND
-%     WHERE FUNDING.FID = ACTIONFUND.FID)
-%     BEGIN
-%     SELECT RAISE(FAIL, 'Funded Amount Cannot Be Greater Then Max Amount');
-%     END;
-%     \end{lstlisting}
-%     \begin{figure}
-%     \caption{Example of Integrity Constraint Violation}
-%     \label{fig:IntCon}
-%     \includegraphics[width=10cm]{Integrity_Violation.png}
-% \end{figure}
-
-% \end{frame}
+\begin{frame}{Extension to Graphical Models}
+  \begin{itemize}
+    \item This graphical representation can be extended to a high dimensional set of random variables $X_{s}$.
+    \item In this example, $s$ corresponds to a single vertex with the whole vertex set $V$ of the total graph. The connections between each vertex in the Markov transition matrix representation quanity the relationship between this random variables.
+  \end{itemize}
+  \begin{figure}
+  \begin{minipage}{0.4\textwidth}
+      The two in Figure \ref{fig:IntroPic} are equivalent, where white spaces indicate no relationship, and grey spaces indicate a 1-to-1 relationship.
+  \end{minipage}%
+  \begin{minipage}{0.6\textwidth}
+    \begin{figure}
+       \includegraphics[width=6cm]{IntroGraphMat.png}
+       \caption{Graph and Sparsity Matrix}
+       \label{fig:IntroPic}
+  \end{figure} 
+  \end{minipage}
+  \end{figure}
+\end{frame}
 
 \end{document}
