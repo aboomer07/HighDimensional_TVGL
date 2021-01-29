@@ -112,4 +112,21 @@
   \end{figure}
 \end{frame}
 
+\begin{frame}{Gaussian Graphical Models}
+  \begin{itemize}
+    \item For a guassian graphical model, we start from a gaussian distribution with dimension equal to the number of vertices $X \sim \mathcal{N}(\mu, \Sigma)$
+    \item The sparsity matrix in the slide above, for a gaussian graphical model, is given by $\Theta = \Sigma^{-1}$, and is also known as the precision matrix. The goal of a gaussian graphical model is to solve for $\Theta$.
+    \item The gaussian distribution can be rewritten in terms of a maximum likelihood problem to solve for $\hat{\Theta}_{MLE}$, where $S$ is the empirical covariance matrix, rearranged and simplified to:
+    \[\mathcal{L}(\Theta; X) = log \ det \ \Theta - trace(S \Theta)\]
+    \item This MLE problem converges to the true precision matrix when $N \xrightarrow{} \infty$. The MLE problem is, however, not even feasible if $p > N$, where $p$ is the number of dimensions.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Graphical LASSO}
+  \begin{itemize}
+    \item As with a LASSO in the context of a linear regression, adding a regularization term can solve the issue of a non-full rank matrix. Additionally, the LASSO term induces low-importance terms to zero.
+    \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution. This increases sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
+  \end{itemize}
+\end{frame}
+
 \end{document}
