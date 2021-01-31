@@ -29,8 +29,24 @@ df.index = rows['Date'].values
 
 emp_cov = np.matmul(df.values.T, df.values)
 
-cov = GraphicalLasso(max_iter=100, alpha=2, tol=0.1, enet_tol=0.1).fit(df)
+cov = GraphicalLasso(max_iter=300, alpha=1.25, tol=0.01, enet_tol=0.01).fit(df)
 covCV = GraphicalLassoCV().fit(df.values)
 
 G = nx.from_numpy_matrix(cov.covariance_)
-G1 = nx.node_connected_component(G)
+
+nodes = list(G.nodes(data=True))
+names_dict = {val[0]: cols['Ticker'].values[i] for i, val in enumerate(nodes)}
+G = nx.relabel_nodes(G, names_dict)
+
+graphs = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+graphs = [g for g in graphs if len(g) > 1]
+
+amzn = G.subgraph([list(names_dict.values()).index('AMZN')])
+
+nx.draw_networkx(graphs[0], pos=nx.spring_layout(graphs[0]),
+	node_size=[len(v) * 200 for v in graphs[0].nodes()])
+plt.show()
+
+nx.draw_networkx(graphs[0], pos=nx.spring_layout(graphs[0]),
+	node_size=[len(v) * 200 for v in graphs[0].nodes()])
+plt.show()
