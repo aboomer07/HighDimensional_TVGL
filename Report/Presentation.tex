@@ -10,7 +10,7 @@
  \usepackage{dsfont}
  \usetikzlibrary{patterns}
  \usepackage{mathrsfs}
- \usepackage{ bbold }
+ \usepackage{bbold}
 \usetikzlibrary{mindmap,trees,shadows}
 \usepackage{caption}
 \usepackage{tabularx}
@@ -114,7 +114,7 @@
 
 \begin{frame}{Gaussian Graphical Models}
   \begin{itemize}
-    \item For a guassian graphical model, we start from a gaussian distribution with dimension equal to the number of vertices $X \sim \mathcal{N}(\mu, \Sigma)$
+    \item For a gaussian graphical model, we start from a gaussian distribution with dimension equal to the number of vertices $X \sim \mathcal{N}(\mu, \Sigma)$
     \item The sparsity matrix in the slide above, for a gaussian graphical model, is given by $\Theta = \Sigma^{-1}$, and is also known as the precision matrix. The goal of a gaussian graphical model is to solve for $\Theta$.
     \item The gaussian distribution can be rewritten in terms of a maximum likelihood problem to solve for $\hat{\Theta}_{MLE}$, where $S$ is the empirical covariance matrix, rearranged and simplified to:
     \[\mathcal{L}(\Theta; X) = log \ det \ \Theta - trace(S \Theta)\]
@@ -128,5 +128,32 @@
     \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution. This increases sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
   \end{itemize}
 \end{frame}
+
+\begin{frame}{Challenge: The Network Structure Can Change Over Time}
+    In many real world settings (e.g. financial markets) the structure of the complex system changes over time.
+    Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
+    \begin{figure}
+       \includegraphics[width=6cm]{network_evolution}
+       \caption{}
+       \source{\cite(hallac2017network)}
+       \label{fig:network_evolution}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Conclusion \& Limitations}
+    The assumption of $X \sim \mathcal{N}(\mu, \Sigma)$ is unlikely to hold in some settings.
+\end{frame}
+
+\begin{frame}{References}
+    \nocite{*}
+    \bibliographystyle{apacite}
+    \bibliography{References}
+\end{frame}
+
+
+
+
+
+
 
 \end{document}
