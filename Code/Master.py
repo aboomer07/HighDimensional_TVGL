@@ -46,6 +46,11 @@ df = df.sample(50, axis=1)
 
 emp_cov = np.matmul(df.values.T, df.values)
 
+cov = GraphicalLasso(max_iter=300, alpha=1.5, tol=0.01, enet_tol=0.01).fit(df)
+covCV = GraphicalLassoCV().fit(df.values)
+
+G = nx.from_numpy_matrix(cov.get_precision())
+
 cov = GraphicalLasso(max_iter=300, alpha=0.01, tol=0.01, enet_tol=0.01, verbose=True).fit(df)
 covCV = GraphicalLassoCV().fit(df.values)
 
@@ -82,7 +87,7 @@ G = nx.relabel_nodes(G, names_dict)
 graphs = [G.subgraph(c).copy() for c in nx.connected_components(G)]
 graphs = [g for g in graphs if len(g) > 1]
 
-amzn = G.subgraph([list(names_dict.values()).index('AMZN')])
+amzn = G.subgraph([list(names_dict.values()).index('GOOG')])
 
 nx.draw_networkx(graphs[0], pos=nx.spring_layout(graphs[0]),
                  node_size=[len(v) * 200 for v in graphs[0].nodes()])

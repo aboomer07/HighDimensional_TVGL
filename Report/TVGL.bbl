@@ -1,0 +1,65 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.0 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{hallac2017network}{article}{}
+      \name{author}{4}{}{%
+        {{hash=465321063afc095eaf0db962c930f2ab}{%
+           family={Hallac},
+           familyi={H\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=3b9697570d6636052ffd76731362f0f8}{%
+           family={Park},
+           familyi={P\bibinitperiod},
+           given={Youngsuk},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=ec94d94cc487dd71939a90cbeaaf47d0}{%
+           family={Boyd},
+           familyi={B\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=900d107125ff0ca84698cb909e4f6c51}{%
+           family={Leskovec},
+           familyi={L\bibinitperiod},
+           given={Jure},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{b52329cbbad0cbb573c654c7abc02940}
+      \strng{fullhash}{5bf1500731011bf029a3a93c7b8ac135}
+      \strng{bibnamehash}{b52329cbbad0cbb573c654c7abc02940}
+      \strng{authorbibnamehash}{b52329cbbad0cbb573c654c7abc02940}
+      \strng{authornamehash}{b52329cbbad0cbb573c654c7abc02940}
+      \strng{authorfullhash}{5bf1500731011bf029a3a93c7b8ac135}
+      \field{sortinit}{H}
+      \field{sortinithash}{5f15a7bc777ad49ff15aa4d2831b1681}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}
+      \field{title}{Network inference via the time-varying graphical lasso}
+      \field{year}{2017}
+      \true{nocite}
+      \field{pages}{205\bibrangedash 213}
+      \range{pages}{9}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
