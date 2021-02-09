@@ -6,12 +6,25 @@ import os
 import sys
 import re
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Force the correct directory
+if os.getcwd().split("/")[-1] == "Code":
+    os.chdir("..")
+currDir = os.getcwd()
+
+# If output directory does not already exist, create one
+if not os.path.isdir("Output"):
+    os.mkdir("Output")
+outputDir = currDir + "/Output/"
 
 currDir = os.getcwd()
 
-df = pd.read_csv(os.path.abspath("..") + "/Data/finance.csv", header=None)
-with open(os.path.abspath("..") + "/Data/DataIndex.csv", 'r') as f:
-	df_index = f.read()
+df = pd.read_csv(os.path.abspath(".") + "/Data/finance.csv", header=None)
+with open(os.path.abspath(".") + "/Data/DataIndex.csv", 'r') as f:
+    df_index = f.read()
+
+#### DATA PREP ###
 
 df_index = df_index.replace("\xa0", "").replace(" = ", ",")
 split = re.search("(?<=\\n)..+(?=column 0)", df_index).span()[0]
@@ -27,12 +40,47 @@ cols.columns = ['Ticker', 'Column']
 df.columns = cols['Ticker'].values
 df.index = rows['Date'].values
 
+df = df.sample(50, axis=1)
+
+#### ESTIMATION ###
+
 emp_cov = np.matmul(df.values.T, df.values)
 
+<<<<<<< HEAD
 cov = GraphicalLasso(max_iter=300, alpha=1.5, tol=0.01, enet_tol=0.01).fit(df)
 covCV = GraphicalLassoCV().fit(df.values)
 
 G = nx.from_numpy_matrix(cov.get_precision())
+=======
+cov = GraphicalLasso(max_iter=300, alpha=0.01, tol=0.01, enet_tol=0.01, verbose=True).fit(df)
+covCV = GraphicalLassoCV().fit(df.values)
+
+#### VISUALIZATION JACOB ###
+
+p = cov.precision_  # get precision matrix
+
+sns.heatmap(p)  # get a quick look
+plt.show()
+
+# prepare the matrix for network illustration
+p = pd.DataFrame(p, columns=df.columns, index=df.columns)
+links = p.stack().reset_index()
+links.columns = ['var1', 'var2', 'value']
+links = links.loc[(abs(links['value']) > 0.17) & (links['var1'] != links['var2'])]
+
+# build the graph using networkx lib
+G = nx.from_pandas_edgelist(links, 'var1', 'var2', create_using=nx.Graph())
+pos = nx.spring_layout(G, k=0.2 * 1 / np.sqrt(len(G.nodes())), iterations=20)
+plt.figure(3, figsize=(15, 15))
+nx.draw(G, pos=pos)
+nx.draw_networkx_labels(G, pos=pos)
+plt.savefig(outputDir + 'NetworkGraph.png')
+plt.close()
+
+#### VISUALIZATION ANDY ###
+
+G = nx.from_numpy_matrix(cov.covariance_)
+>>>>>>> f1cc5fd9c4c60075a8906c07252c5a0379e4fc8e
 
 nodes = list(G.nodes(data=True))
 names_dict = {val[0]: cols['Ticker'].values[i] for i, val in enumerate(nodes)}
@@ -44,9 +92,9 @@ graphs = [g for g in graphs if len(g) > 1]
 amzn = G.subgraph([list(names_dict.values()).index('GOOG')])
 
 nx.draw_networkx(graphs[0], pos=nx.spring_layout(graphs[0]),
-	node_size=[len(v) * 200 for v in graphs[0].nodes()])
+                 node_size=[len(v) * 200 for v in graphs[0].nodes()])
 plt.show()
 
 nx.draw_networkx(graphs[0], pos=nx.spring_layout(graphs[0]),
-	node_size=[len(v) * 200 for v in graphs[0].nodes()])
+                 node_size=[len(v) * 200 for v in graphs[0].nodes()])
 plt.show()
