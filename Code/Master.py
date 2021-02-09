@@ -46,12 +46,11 @@ df = df.sample(50, axis=1)
 
 emp_cov = np.matmul(df.values.T, df.values)
 
-<<<<<<< HEAD
 cov = GraphicalLasso(max_iter=300, alpha=1.5, tol=0.01, enet_tol=0.01).fit(df)
 covCV = GraphicalLassoCV().fit(df.values)
 
 G = nx.from_numpy_matrix(cov.get_precision())
-=======
+
 cov = GraphicalLasso(max_iter=300, alpha=0.01, tol=0.01, enet_tol=0.01, verbose=True).fit(df)
 covCV = GraphicalLassoCV().fit(df.values)
 
@@ -80,7 +79,6 @@ plt.close()
 #### VISUALIZATION ANDY ###
 
 G = nx.from_numpy_matrix(cov.covariance_)
->>>>>>> f1cc5fd9c4c60075a8906c07252c5a0379e4fc8e
 
 nodes = list(G.nodes(data=True))
 names_dict = {val[0]: cols['Ticker'].values[i] for i, val in enumerate(nodes)}
