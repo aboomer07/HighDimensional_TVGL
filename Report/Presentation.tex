@@ -77,6 +77,12 @@
 
 \date{\today}
 
+\graphicspath{
+    {.} % document root dir
+    {./Output/}
+    {./Report/}
+}
+
 \begin{document}
 
 
@@ -133,9 +139,9 @@
     In many real world settings (e.g. financial markets) the structure of the complex system changes over time.
     Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
     \begin{figure}
-       \includegraphics[width=6cm]{network_evolution}
+       \includegraphics[width=6cm]{NetworkGraph.png}
        \caption{}
-       \source{\cite(hallac2017network)}
+       % \source{\cite(hallac2017network)}
        \label{fig:network_evolution}
   \end{figure}
 \end{frame}
