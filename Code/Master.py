@@ -76,6 +76,35 @@ nx.draw_networkx_labels(G, pos=pos)
 plt.savefig(outputDir + 'NetworkGraph.png')
 plt.close()
 
+
+#### ALPHA RANGE ###
+
+def output_lasso(alpha, data=df):
+    cov = GraphicalLasso(max_iter=300, alpha=alpha, tol=0.01, enet_tol=0.01, verbose=True).fit(data)
+
+    precision = cov.precision_  # get precision matrix
+
+    # prepare the matrix for network illustration
+    precision = pd.DataFrame(precision, columns=df.columns, index=df.columns)
+    links = precision.stack().reset_index()
+    links.columns = ['var1', 'var2', 'value']
+    links = links.loc[(abs(links['value']) > 0.17) & (links['var1'] != links['var2'])]
+
+    # build the graph using networkx lib
+    G = nx.from_pandas_edgelist(links, 'var1', 'var2', create_using=nx.Graph())
+    pos = nx.spring_layout(G, k=0.2 * 1 / np.sqrt(len(G.nodes())), iterations=20)
+    plt.figure(3, figsize=(15, 15))
+    nx.draw(G, pos=pos)
+    nx.draw_networkx_labels(G, pos=pos)
+    plt.savefig(outputDir + "NetworkGraph_Alpha" + str(alpha) + ".png")
+    plt.close()
+
+alphas = [0.005, 0.01, 0.05, 0.1]
+
+for alpha in alphas:
+    output_lasso(alpha)
+
+
 #### VISUALIZATION ANDY ###
 
 G = nx.from_numpy_matrix(cov.covariance_)

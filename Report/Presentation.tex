@@ -93,7 +93,8 @@
         \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
         \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
         \item Graphs can also be thought of in terms of Markov chains, and some of the properties and representations of Markov Chains apply to graphs as well
-        \item For example, the edge set of a graph can be represented as a Markov transition matrix. For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
+        \item For example, the edge set of a graph can be represented as a Markov transition matrix.
+        \item For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
         \[\begin{bmatrix} W_{(a, a)} & W_{(a, b)} \\
            W_{(b, a)} & W_{(b, b)} \end{bmatrix}\]
     \end{itemize}
@@ -130,14 +131,24 @@
 
 \begin{frame}{Graphical LASSO}
   \begin{itemize}
-    \item As with a LASSO in the context of a linear regression, adding a regularization term can solve the issue of a non-full rank matrix. Additionally, the LASSO term induces low-importance terms to zero.
-    \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution. This increases sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
+    \item As with a LASSO in the context of a linear regression, adding a regularization term can solve the issue of a non-full rank matrix.
+    Additionally, the LASSO term induces low-importance terms to zero.
+    \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution.
+    This increases sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
+    \item The graphical lasso estimator is the $\hat{\Theta}$ such that:
+\begin{align*}
+    \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda \sum_{j \neq k}\left|\Theta_{j k}\right|\right)
+\end{align*}
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Application}
+
 \end{frame}
 
 \begin{frame}{Challenge: The Network Structure Can Change Over Time}
     In many real world settings (e.g. financial markets) the structure of the complex system changes over time.
-    Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
+    % Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
     \begin{figure}
        \includegraphics[width=6cm]{NetworkGraph.png}
        \caption{}
@@ -146,8 +157,45 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{Conclusion \& Limitations}
-    The assumption of $X \sim \mathcal{N}(\mu, \Sigma)$ is unlikely to hold in some settings.
+\begin{frame}{Solution: Optimization on a Chain Graph (TVGL)}
+    \begin{figure}
+       \includegraphics[width=12cm]{chain_graph.png}
+       \caption{}
+       \source{\cite(hallac2017network)}
+       \label{fig:chain_graph}
+  \end{figure}
+    The optimization problem becomes
+    \begin{align*}
+        \underset{\Theta \in \mathrm{S}_{++}^{p}}{\operatorname{minimize}} \quad \sum_{i=1}^{T}-l_{i}\left(\Theta_{i}\right)+\lambda\left\|\Theta_{i}\right\|_{\mathrm{od}, 1}+\beta \sum_{i=2}^{T} \psi\left(\Theta_{i}-\Theta_{i-1}\right)
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Choice of $\psi$}
+    \begin{itemize}
+        \item $\psi$ allows to enforce different behaviors in the evolution of the network structure
+        \item Expectations how the underlying network may change over time can be encoded into $\psi$
+    \end{itemize}
+    Options:
+    \begin{itemize}
+        \item \textbf{A few edges changing at a time} - $\psi(X) = \sum_{i,1}|X_{i,j}|$
+        % element-wise l1 penalte encourages neighboring graphs to be identical
+        \item \textbf{Global restructuring} - $\psi(X) = \sum_j||[X]_j||_2$
+        \item \textbf{Smoothly varying over time} - $\psi(X) = \sum_{i,j}X^2_{i,j}$
+        \item \textbf{Block-wise restructuring} - $\psi(X) = \sum_j\left( max_i|X_{i,j}| \right)$
+        \item \textbf{Perturbed node} - $\psi(X)=\min _{V: V+V^{T}=X} \sum_{j}\left\|[V]_{j}\right\|_{2}$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{TVGL Application}
+\end{frame}
+
+
+\begin{frame}{Limitations}
+    \begin{itemize}
+        \item Does $X \sim \mathcal{N}(\mu, \Sigma)$ hold?
+        \item Choice of $\psi$ relies on knowledge about network behavior.
+        No a priori decision possible.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{References}
