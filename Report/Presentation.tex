@@ -67,6 +67,10 @@
   belowskip=-0.5cm
 }
 
+\newcommand{\pic}[1]{%
+    \includegraphics[width=4cm]{#1}
+}
+
 \title[High Dimensional Models] % (optional, only for long titles)
 {High Dimensional Models}
 \subtitle{Time-Varying Graphical Lasso}
@@ -91,27 +95,49 @@
 
 
 \frame{\titlepage}
-    
-\begin{frame}{Introduction to Graphs}
-    \begin{itemize}
-        \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
-        \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
-        \item Graphs can also be thought of in terms of Markov chains, and some of the properties and representations of Markov Chains apply to graphs as well
-        \item For example, the edge set of a graph can be represented as a Markov transition matrix.
-        \item For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
-        \[\begin{bmatrix} W_{(a, a)} & W_{(a, b)} \\
-           W_{(b, a)} & W_{(b, b)} \end{bmatrix}\]
-    \end{itemize}
-\end{frame}
 
-\begin{frame}{Extension to Graphical Models}
+\begin{frame}{Application of Network Theory \cite{page1999pagerank}}
+	\begin{itemize}
+		\item The Google search algorithm, PageRank, is based on network theory, and is an extension of a measure of network importance called eigenvector centrality.
+        This measure assigns higher importance to nodes that are connected to other highly connected nodes.
+		% \item In \cite{page1999pagerank}, the authors describe PageRank with the metaphor of a random surfer who randomly
+        % selects links within webpages to transition to the next webpage.
+		\item The PageRank measure of importance ends up being the long run probability of a random surfer finding themselves on any given webpage.
+        The search results are sorted according to this network importance vector.
+	\end{itemize}
+
+        \begin{figure}
+       \includegraphics[width=4cm]{PageRankExample}
+       \caption{Google Page Rank}
+       \source{}
+       \label{fig:PageRank}
+  \end{figure}
+\end{frame}
+    
+%\begin{frame}{Introduction to Graphs}
+%    \begin{itemize}
+%        \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
+%        \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
+%        \item Graphs can also be thought of in terms of Markov chains, and some of the properties and representations of Markov Chains apply to graphs as well
+%        \item For example, the edge set of a graph can be represented as a Markov transition matrix.
+%        \item For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
+%        \[\begin{bmatrix} W_{(a, a)} & W_{(a, b)} \\
+%           W_{(b, a)} & W_{(b, b)} \end{bmatrix}\]
+%    \end{itemize}
+%\end{frame}
+
+\begin{frame}{Introduction to Graphical Models}
+    \footnotesize
   \begin{itemize}
+      \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
+      \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
     \item This graphical representation can be extended to a high dimensional set of random variables $X_{s}$.
-    \item In this example, $s$ corresponds to a single vertex with the whole vertex set $V$ of the total graph. The connections between each vertex in the Markov transition matrix representation quanity the relationship between this random variables.
+    \item In this example, $s$ corresponds to a single vertex with the whole vertex set $V$ of the total graph.
+    The connections between each vertex in the Markov transition matrix representation quantify the relationship between this random variables.
   \end{itemize}
   \begin{figure}
   \begin{minipage}{0.4\textwidth}
-      The two in Figure \ref{fig:IntroPic} are equivalent, where white spaces indicate no relationship, and grey spaces indicate a 1-to-1 relationship.
+      The two visualizations in Figure~\ref{fig:IntroPic} are equivalent, where white spaces indicate no relationship, and grey spaces indicate a 1-to-1 relationship.
   \end{minipage}%
   \begin{minipage}{0.6\textwidth}
     \begin{figure}
@@ -123,13 +149,6 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{Real World Network Theory \cite{page1999pagerank}}
-	\begin{itemize}
-		\item The google search algorithm, PageRank, is based on network theory, and is an extension of a measure of network importance called eigenvector centrality. This measure assigns higher importance to nodes that are connected to other highly connected nodes.
-		\item In \cite{page1999pagerank}, the authors describe PageRank with the metaphor of a random surfer who randomly selects links within webpages to transition to the next webpage.
-		\item The PageRank measure of importance ends up being the long run probability of the random surfer finding themselves on any given webpage. The search results are sorted according to this network importance vector.
-	\end{itemize}
-\end{frame}
 
 \begin{frame}{Gaussian Graphical Models}
   \begin{itemize}
@@ -137,7 +156,8 @@
     \item The sparsity matrix in the slide above, for a gaussian graphical model, is given by $\Theta = \Sigma^{-1}$, and is also known as the precision matrix. The goal of a gaussian graphical model is to solve for $\Theta$.
     \item The gaussian distribution can be rewritten in terms of a maximum likelihood problem to solve for $\hat{\Theta}_{MLE}$, where $S$ is the empirical covariance matrix, rearranged and simplified to:
     \[\mathcal{L}(\Theta; X) = log \ det \ \Theta - trace(S \Theta)\]
-    \item This MLE problem converges to the true precision matrix when $N \xrightarrow{} \infty$. The MLE problem is, however, not even feasible if $p > N$, where $p$ is the number of dimensions.
+    \item This MLE problem converges to the true precision matrix when $N \xrightarrow{} \infty$.
+    \textbf{The MLE problem is, however, not feasible if $p > N$, where $p$ is the number of dimensions.}
   \end{itemize}
 \end{frame}
 
@@ -146,7 +166,7 @@
     \item As with a LASSO in the context of a linear regression, adding a regularization term can solve the issue of a non-full rank matrix.
     Additionally, the LASSO term induces low-importance terms to zero.
     \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution.
-    This increases sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
+    This increased sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
     \item The graphical lasso estimator is the $\hat{\Theta}$ such that:
 \begin{align*}
     \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda \sum_{j \neq k}\left|\Theta_{j k}\right|\right)
@@ -156,20 +176,24 @@
 
 \begin{frame}{Application}
 	\begin{itemize}
-		\item Using a penalty parameter alpha of 0.05, and laying out the network in a circular pattern, we get:
+		\item The penalty parameter determines the structure of the network.
 	\end{itemize}
-	\begin{figure}
-		\includegraphics[width=7cm]{NetworkGraph_Alpha0.05_Layoutcircular.png}
-		\caption{}
-		% \label{fig:circular0.05}
-	\end{figure}
-\end{frame}
+    \begin{figure}
+   \centering
+\begin{tabular}{cc}
+    $\alpha = 0.05$ & $\alpha = 0.005$ \\
+    \pic{NetworkGraph_Alpha0.05_Layoutcircular.png} &  \pic{NetworkGraph_Alpha0.005_Layoutcircular.png} \\
+\end{tabular}
+\caption{Tuning $\alpha$}
+\label{static_lasso}
+\end{figure}
+    \end{frame}
 
 \begin{frame}{Challenge: The Network Structure Can Change Over Time}
     In many real world settings (e.g. financial markets) the structure of the complex system changes over time.
     % Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
     \begin{figure}
-       \includegraphics[width=6cm]{NetworkGraph.png}
+       \includegraphics[width=6cm]{network_evolution}
        \caption{}
        % \source{\cite(hallac2017network)}
        \label{fig:network_evolution}
