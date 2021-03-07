@@ -96,14 +96,12 @@
 
 \frame{\titlepage}
 
-\begin{frame}{Application of Network Theory \cite{page1999pagerank}}
+\begin{frame}{Network Theory in Practice \cite{page1999pagerank}}
 	\begin{itemize}
-		\item The Google search algorithm, PageRank, is based on network theory, and is an extension of a measure of network importance called eigenvector centrality.
+		\item The Google search algorithm, PageRank, is based on network theory, and is an extension of a measure of network
+        importance called eigenvector centrality.
         This measure assigns higher importance to nodes that are connected to other highly connected nodes.
-		% \item In \cite{page1999pagerank}, the authors describe PageRank with the metaphor of a random surfer who randomly
-        % selects links within webpages to transition to the next webpage.
-		\item The PageRank measure of importance ends up being the long run probability of a random surfer finding themselves on any given webpage.
-        The search results are sorted according to this network importance vector.
+        Search results are sorted according to this network importance vector.
 	\end{itemize}
 
         \begin{figure}
@@ -157,16 +155,17 @@
     \item The gaussian distribution can be rewritten in terms of a maximum likelihood problem to solve for $\hat{\Theta}_{MLE}$, where $S$ is the empirical covariance matrix, rearranged and simplified to:
     \[\mathcal{L}(\Theta; X) = log \ det \ \Theta - trace(S \Theta)\]
     \item This MLE problem converges to the true precision matrix when $N \xrightarrow{} \infty$.
-    \textbf{The MLE problem is, however, not feasible if $p > N$, where $p$ is the number of dimensions.}
   \end{itemize}
+    % talk about interpretability!
 \end{frame}
 
 \begin{frame}{Graphical LASSO}
   \begin{itemize}
-    \item As with a LASSO in the context of a linear regression, adding a regularization term can solve the issue of a non-full rank matrix.
-    Additionally, the LASSO term induces low-importance terms to zero.
-    \item In the case of the graphical LASSO, weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution.
-    This increased sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
+      \item The MLE problem is \textbf{not feasible if $p > N$}, where $p$ is the number of dimensions.
+    \item As with a LASSO in the context of a linear regression, adding a \textbf{regularization term can solve the issue} of a non-full rank matrix.
+    \item Additionally, the LASSO term induces low-importance terms to zero.
+      Weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution.
+    Increased sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
     \item The graphical lasso estimator is the $\hat{\Theta}$ such that:
 \begin{align*}
     \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda \sum_{j \neq k}\left|\Theta_{j k}\right|\right)
@@ -174,17 +173,19 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Application}
+\begin{frame}{$\lambda$ in the Context of Networks}
 	\begin{itemize}
 		\item The penalty parameter determines the structure of the network.
+        \item Typical methods can be applied, e.g. cross validation
 	\end{itemize}
     \begin{figure}
    \centering
 \begin{tabular}{cc}
-    $\alpha = 0.05$ & $\alpha = 0.005$ \\
+    $\lambda = 0.05$ & $\lambda = 0.005$ \\
     \pic{NetworkGraph_Alpha0.05_Layoutcircular.png} &  \pic{NetworkGraph_Alpha0.005_Layoutcircular.png} \\
 \end{tabular}
-\caption{Tuning $\alpha$}
+\caption{Tuning $\lambda$, own calculations based on data from \cite{hallac2017network}}
+   % how to choose alpha?
 \label{static_lasso}
 \end{figure}
     \end{frame}
@@ -205,12 +206,15 @@
        \includegraphics[width=12cm]{chain_graph.png}
        \caption{\cite{hallac2017network}}
        % \source{\cite{hallac2017network}}
+       % how to choose beta?
        \label{fig:chain_graph}
   \end{figure}
     The optimization problem becomes
     \begin{align*}
         \underset{\Theta \in \mathrm{S}_{++}^{p}}{\operatorname{minimize}} \quad \sum_{i=1}^{T}-l_{i}\left(\Theta_{i}\right)+\lambda\left\|\Theta_{i}\right\|_{\mathrm{od}, 1}+\beta \sum_{i=2}^{T} \psi\left(\Theta_{i}-\Theta_{i-1}\right)
     \end{align*}
+    where $\beta$ determines how strongly correlated neighboring covariance estimations should be.
+    A small $\beta$ will lead to $\theta$'s which fluctuate from estimate-to-estimate, whereas large $\beta$'s lead to smoother estimates over time.
 \end{frame}
 
 \begin{frame}{Choice of $\psi$}
@@ -220,31 +224,50 @@
     \end{itemize}
     Options:
     \begin{itemize}
-        \item \textbf{A few edges changing at a time} - $\psi(X) = \sum_{i,1}|X_{i,j}|$
+        % \item \textbf{A few edges changing at a time} - $\psi(X) = \sum_{i,1}|X_{i,j}|$
         % element-wise l1 penalte encourages neighboring graphs to be identical
         \item \textbf{Global restructuring} - $\psi(X) = \sum_j||[X]_j||_2$
         \item \textbf{Smoothly varying over time} - $\psi(X) = \sum_{i,j}X^2_{i,j}$
-        \item \textbf{Block-wise restructuring} - $\psi(X) = \sum_j\left( max_i|X_{i,j}| \right)$
+        % \item \textbf{Block-wise restructuring} - $\psi(X) = \sum_j\left( max_i|X_{i,j}| \right)$
         \item \textbf{Perturbed node} - $\psi(X)=\min _{V: V+V^{T}=X} \sum_{j}\left\|[V]_{j}\right\|_{2}$
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Optimization Algorithm}
     \begin{itemize}
-        \item How do we arrive at closed form solution?
+        \item The authors use the alternating direction method of multipliers (ADMM), a distributed convex optimization approach.
+        \item ADMM allows splitting the problem up into a series of sub-problems.
+        \item They then use a message-passing algorithm to converge on the globally optimal solution.
+        \item Making use of proximal operators they derive closed form solutions for each of the ADMM sub-problems.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{TVGL Application}
+\begin{frame}{GLASSO vs TVGL}
+    \href{https://www.dropbox.com/s/bin9o25phkf9lk3/Heatmaps.mp4?dl=0}{Time varying graphical lasso with $\psi(X)=\min _{V: V+V^{T}=X} \sum_{j}\left\|[V]_{j}\right\|_{2}$ (perturbed node)}
+    % what does correlation with itself mean, why does it change?
 \end{frame}
 
-
-\begin{frame}{Limitations}
+\begin{frame}{Importance of $\psi$}
     \begin{itemize}
-        \item Does $X \sim \mathcal{N}(\mu, \Sigma)$ hold?
-        \item Choice of $\psi$ relies on knowledge about network behavior.
-        No a priori decision possible.
-        % you can only apply one psi
+        \item Choice of $\psi$ relies on knowledge about network behavior
+        \item No a priori decision possible
+        \item $\psi$ is fixed over time
+    \end{itemize}
+    We illustrate the importance of the choice of $\psi$ by replicating the author's case studies with different
+    penalty functions.
+\end{frame}
+
+\begin{frame}{Changing $\psi$}
+
+\end{frame}
+
+\begin{frame}{Extension: Cross Validation for $\psi$}
+
+\end{frame}
+
+\begin{frame}{Extension: Understanding Network Importance}
+    \begin{itemize}
+        \item The eigenvector centrality allows additional insight into the network's dynamic.
     \end{itemize}
 \end{frame}
 
