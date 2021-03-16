@@ -212,16 +212,16 @@
   \end{figure}
     The optimization problem becomes
     \begin{align*}
-        \underset{\Theta \in \mathrm{S}_{++}^{p}}{\operatorname{minimize}} \quad \sum_{i=1}^{T}-l_{i}\left(\Theta_{i}\right)+\lambda\left\|\Theta_{i}\right\|_{\mathrm{od}, 1}+\beta \sum_{i=2}^{T} \psi\left(\Theta_{i}-\Theta_{i-1}\right)
+        \underset{\Theta \in \mathrm{S}_{++}^{p}}{\operatorname{minimize}} \quad \sum_{i=1}^{T} \operatorname{Tr}(S_{i} \Theta_{i}) -\log \operatorname{det} \Theta_{i} + \lambda\left\|\Theta_{i}\right\|_{\mathrm{od}, 1}+\beta \sum_{i=2}^{T} \psi\left(\Theta_{i}-\Theta_{i-1}\right)
     \end{align*}
     where $\beta$ determines how strongly correlated neighboring covariance estimations should be.
-    A small $\beta$ will lead to $\theta$'s which fluctuate from estimate-to-estimate, whereas large $\beta$'s lead to smoother estimates over time.
+    A small $\beta$ will lead to $\Theta$'s which fluctuate from estimate-to-estimate, whereas large $\beta$'s lead to smoother estimates over time.
 \end{frame}
 
 \begin{frame}{Choice of $\psi$}
     \begin{itemize}
         \item $\psi$ allows to enforce different behaviors in the evolution of the network structure
-        \item Expectations how the underlying network may change over time can be encoded into $\psi$
+        \item Expectations of how the underlying network may change over time can be encoded into $\psi$
     \end{itemize}
     Options:
     \begin{itemize}
@@ -234,17 +234,30 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Optimization Algorithm}
-    \begin{itemize}
-        \item The authors use the alternating direction method of multipliers (ADMM), a distributed convex optimization approach.
-        \item ADMM allows splitting the problem up into a series of sub-problems.
-        \item They then use a message-passing algorithm to converge on the globally optimal solution.
-        \item Making use of proximal operators they derive closed form solutions for each of the ADMM sub-problems.
-    \end{itemize}
+\begin{frame}{Optimization Algorithm: ADMM}
+
+	\begin{itemize}
+		\item The authors use an ADMM (alternating direction method of multipliers) to solve the TVGL optimization problem.
+		\item ADMM is an general optimization technique that can be used on any convex optimization problem. 
+		\item ADMM has a few main advantages compared to standard gradient descent based methods: (1) Can be applied to nonsmooth functions, (2) Can be distributed across multiple independent machines, (3) It is generally faster.
+		\item To put ADMM into context, we show how it can be used to solve a standard LASSO regression
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{GlASSO vs. TVGL}
-  
+\begin{frame}{Optimization Algorithm: ADMM}
+	The LASSO regression optimization problem is:
+\[\hat{\beta}_{\lambda} = \underset{\beta}{argmin} \sum_{i=1}^{N} (Y_{i} - X_{i} \beta)^{2} + \lambda \sum_{j=1}^{p} |\beta|\]
+\end{frame}
+
+\begin{frame}{GLASSO vs. TVGL}
+\underline{Static LASSO}
+
+\begin{itemize}
+  \item Date Range: 13/01/2010 - 19/03/2010
+  \item Stock List: Apple, MSFT, AMAZON, Intel, Boeing, Fedex
+  \item $\alpha = 0.18$
+\end{itemize}
+
   \begin{figure}
     \includegraphics[width=8cm]{Static_Psi5_alpha0.18.png}
     % \caption{}
@@ -253,8 +266,20 @@
 
 \end{frame}
 
-\begin{frame}{GlASSO vs. TVGL}
-  \animategraphics[loop,controls,width=\linewidth]{1}{PrecMatsPsi5Alpha0.18Beta13}{0}{15}
+\begin{frame}{GLASSO vs. TVGL}
+\underline{TVGL}
+  \begin{columns}
+    \begin{column}{0.3\linewidth}
+      \begin{itemize}
+        \item Date Range, Stock List: Same As Static
+        \item ($\alpha$, $\beta$) = ($0.18$, $13$)
+        \item $\psi = $ Perturbed Node
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.75\linewidth}
+      \animategraphics[loop,controls,height=6.5cm]{1}{PrecMatsPsi5Alpha0.18Beta13}{0}{15}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Importance of $\psi$}
@@ -267,18 +292,34 @@
     penalty functions.
 \end{frame}
 
-\begin{frame}{Changing $\psi$}
-
+\begin{frame}{TVGL}
+\underline{Sensitivity to Changing Psi}
+  \begin{columns}
+    \begin{column}{0.3\linewidth}
+      \begin{itemize}
+        \item Date Range, Stock List: Same As Static
+        \item ($\alpha$, $\beta$) = ($0.18$, $13$)
+        \item $\psi = $ Smoothly Varying
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.75\linewidth}
+      \animategraphics[loop,controls,height=6.5cm]{1}{PrecMatsPsi3Alpha0.18Beta13}{0}{15}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{Extension: Cross Validation for $\psi$}
+% \begin{frame}{Extension: Cross Validation for $\psi$}
 
-\end{frame}
+% \end{frame}
 
 \begin{frame}{Extension: Understanding Network Importance}
     \begin{itemize}
-        \item The eigenvector centrality allows additional insight into the network's dynamic.
+        \item The eigenvector centrality offers a different perspective into the network's dynamic. Though Microsoft obscures the movement somewhat, we can see an uptick in the centrality of Apple.
     \end{itemize}
+
+    \begin{figure}
+      \includegraphics[width=9cm]{EigenVectorCentralityPsi5Alpha0.18Beta13.png}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{References}
