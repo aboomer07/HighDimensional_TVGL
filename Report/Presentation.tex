@@ -12,6 +12,8 @@
  \usetikzlibrary{patterns}
  \usepackage{mathrsfs}
  \usepackage{bbold}
+ \usepackage{tcolorbox}
+ \usepackage{txfonts}
 \usetikzlibrary{mindmap,trees,shadows}
 \usepackage{caption}
 \usepackage{tabularx}
@@ -96,100 +98,129 @@
 
 
 \frame{\titlepage}
-
-\begin{frame}{Network Theory in Practice \cite{page1999pagerank}}
-	\begin{itemize}
-		\item The Google search algorithm, PageRank, is based on network theory, and is an extension of a measure of network
-        importance called eigenvector centrality.
-        This measure assigns higher importance to nodes that are connected to other highly connected nodes.
-        Search results are sorted according to this network importance vector.
-	\end{itemize}
-
-        \begin{figure}
-       \includegraphics[width=4cm]{PageRankExample}
-       \caption{Google Page Rank}
-       \source{}
-       \label{fig:PageRank}
-  \end{figure}
-\end{frame}
     
-%\begin{frame}{Introduction to Graphs}
-%    \begin{itemize}
-%        \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
-%        \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
-%        \item Graphs can also be thought of in terms of Markov chains, and some of the properties and representations of Markov Chains apply to graphs as well
-%        \item For example, the edge set of a graph can be represented as a Markov transition matrix.
-%        \item For an edge set $E \subset (a, b) x (a, b)$ the matrix would be:
-%        \[\begin{bmatrix} W_{(a, a)} & W_{(a, b)} \\
-%           W_{(b, a)} & W_{(b, b)} \end{bmatrix}\]
-%    \end{itemize}
-%\end{frame}
 
-\begin{frame}{Introduction to Graphical Models}
-    \footnotesize
-  \begin{itemize}
-      \item A graph is represented by a set of vertices $V = \{1, 2, \dotsb, p\}$ and by a set of edges $E \subset V x V$
-      \item A graph is undirected when there is no distinction between the edge $(s, t)$ and $(t, s) \quad \forall \ s, t \in E$
-    \item This graphical representation can be extended to a high dimensional set of random variables $X_{s}$.
-    \item In this example, $s$ corresponds to a single vertex with the whole vertex set $V$ of the total graph.
-    The connections between each vertex in the Markov transition matrix representation quantify the relationship between this random variables.
-  \end{itemize}
-  \begin{figure}
-  \begin{minipage}{0.4\textwidth}
-      The two visualizations in Figure~\ref{fig:IntroPic} are equivalent, where white spaces indicate no relationship, and grey spaces indicate a 1-to-1 relationship.
-  \end{minipage}%
-  \begin{minipage}{0.6\textwidth}
-    \begin{figure}
-       \includegraphics[width=6cm]{IntroGraphMat.png}
-       \caption{Graph and Sparsity Matrix}
-       \label{fig:IntroPic}
-  \end{figure} 
-  \end{minipage}
-  \end{figure}
+\begin{frame}{Overview}
+	\begin{enumerate}
+		\item Introduction to Graphical Models
+		\begin{itemize}
+			\item Important Properties
+			\item Interpretation
+		\end{itemize}
+		\item Gaussian Graphical Model
+		\item Time Varying Graphical Lasso (TGLV)
+		\begin{itemize}
+			\item Altered Optimisation Problem
+			\item ADMM
+		\end{itemize}
+		\item Practical Application of TGVL
+		\begin{itemize}
+			\item Comparison to Static Graphical Lasso
+			\item Changing the penalty function
+		\end{itemize}
+		\end{enumerate}
+\end{frame}
+
+\begin{frame}{Graphical Models}
+\begin{itemize}
+	\item Graphical models offer a way to encode conditional dependencies between $p$ random variables $X_1, \cdots, X_p$ by a graph $g$
+	\item A graph consists of a vertex set $V = \{1,2, \cdots, p\}$ and an edge set $E \subset V \times V$
+	\item We focus on undirected graphical models, i.e. no distinction between an edge $(s, t) \in E$ and the edge $(t,s)$.
+\end{itemize}
+Consider the following example:
+\begin{figure}
+	\caption{Undirected Graphical Model}
+	\includegraphics[trim={2cm 2cm 10cm 38cm}, clip, width = 7cm]{graphs/IMG_0091}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Factorization Property}
+A graph clique $C \subseteq V$ is a fully-connected subset of the vertex set, i.e. $(s,t) \in E \forall s,t \in C$. \cite{hastie2015statistical}
+\begin{align*}
+	\mathbb{P}(A, B, C, D) &\propto \phi(A,B) \phi(B, C, D) \\
+	P(X) &= \frac{1}{Z} \prod_{c \in C} \phi c (x_c)
+\end{align*}
+\begin{figure}
+	\caption{Maximal Cliques}
+	\includegraphics[trim={2cm 18cm 10cm 35cm}, clip, width = 6.5cm]{graphs/IMG_0093}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Markov Property}
+Any two subsets $S$ and $T$ are conditionally independent given a separating subset $Y$. A random vector $X$ is Markov with respect to $g$ if
+\begin{align*}
+	X_S \Perp X_T | X_Y \text{ for all cut sets } S \subset V.
+\end{align*}
+\begin{figure}
+	\caption{Separating Set: $\{ B, C\}$}
+	\includegraphics[trim={2cm 2cm 10cm 32cm}, clip, width = 7cm]{graphs/IMG_0094}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Equivalence of Properties}
+\begin{itemize}
+	\item Hammersley-Clifford theorem: \begin{center}
+		\textit{For any strictly positive distribution the distribution of $X$ factorizes according to the graph $g$ if and only if the random vector X is Markov with respect to the graph.} \cite{hastie2015statistical}
+	\end{center}
+\end{itemize}
 \end{frame}
 
 
-\begin{frame}{Gaussian Graphical Models}
-  \begin{itemize}
-    \item For a gaussian graphical model, we start from a gaussian distribution with dimension equal to the number of vertices $X \sim \mathcal{N}(\mu, \Sigma)$
-    \item The sparsity matrix in the slide above, for a gaussian graphical model, is given by $\Theta = \Sigma^{-1}$, and is also known as the precision matrix. The goal of a gaussian graphical model is to solve for $\Theta$.
-    \item The gaussian distribution can be rewritten in terms of a maximum likelihood problem to solve for $\hat{\Theta}_{MLE}$, where $S$ is the empirical covariance matrix, rearranged and simplified to:
-    \[\mathcal{L}(\Theta; X) = log \ det \ \Theta - trace(S \Theta)\]
-    \item This MLE problem converges to the true precision matrix when $N \xrightarrow{} \infty$.
-  \end{itemize}
-    % talk about interpretability!
+\begin{frame}{Gaussian Graphical Model}
+\begin{center}
+		\begin{tcolorbox}[width = 4.5in, interior hidden, boxsep = 0pt,
+			left = 2pt, right = 2pt, top = 2pt]
+			\begin{align*}
+			X \sim \mathcal{N}(\mu, \Sigma)
+			\end{align*}
+			If $\Sigma$ is positive definite, distribution has density on $\mathbb{R}^{p}$
+\begin{align*}
+	f(x \mid \mu, \Sigma)=(2 \pi)^{-p / 2}(\operatorname{det} \Theta)^{1 / 2} e^{-(x-\mu)^{T} \Theta(x-\mu) / 2}
+\end{align*}
+where $\Theta=\Sigma^{-1}$ is the Precision matrix of the distribution.
+		\end{tcolorbox}	
+\end{center}
+
+Empirical covariance $S = \frac{1}{n-1} \sum_{i=1}^{n}\left(x_{i}-\mu\right)\left(x_{i}-\mu\right)'$
+
 \end{frame}
 
-\begin{frame}{Graphical LASSO}
+\begin{frame}{Gaussian Graphical Model}
+	A multivariate Gaussian distribution can be represented by a Markov random field, i.e. an undirected graph $g = (V, E)$ with
+	\begin{itemize}
+		\item the vertex set $V = \{1, \cdots, p \}$ corresponding to the random variables and
+		\item the edge set $E = \left\{(i, j) \in V \mid i \neq j, \Theta_{i j} \neq 0\right\}$
+	\end{itemize}
+	\begin{figure}
+		\includegraphics[trim={0 2cm 0 0}, clip,width = 8cm]{IntroGraphMat}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{Estimating the graph structure $\Leftrightarrow \Theta$}
   \begin{itemize}
-      \item The MLE problem is \textbf{not feasible if $p > N$}, where $p$ is the number of dimensions.
-    \item As with a LASSO in the context of a linear regression, adding a \textbf{regularization term can solve the issue} of a non-full rank matrix.
-    \item Additionally, the LASSO term induces low-importance terms to zero.
-      Weak edge connections in the precision matrix will go to zero, increasing the sparsity of the resulting solution.
-    Increased sparsity aids in interpretability by filtering out noisy relationships, and can be used even when $N$ is close to $p$.
-    \item The graphical lasso estimator is the $\hat{\Theta}$ such that:
+      \item Suppose $X$ denotes samples from a multivariate Gaussian distribution with $\mu = 0$ and precision matrix $\Theta \in \mathbb{R}^{p \times p}$
+    \item We can write the log-likelihood of the multivariate Gaussian as
+    \begin{align*}
+    	\mathcal{L}(\Theta; X) = \frac{1}{N} \sum_{i=1}^N \log \mathbb{P}_{\Theta}(xi) = \log det \Theta - trace (S \Theta)
+    \end{align*}
+    \item So why not just estimate by MLE to obtain $\widehat{\Theta}_{ML}$?
+    \begin{enumerate}
+    	\item A sparse graph increases interpretability, prevents overfitting.
+    	\item In real world applications often times $p > N$, then MLE solution does not exist.
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\ell_1$ Norm Regularisation}
+Sparsity can be achieved by adding a penalty term to the optimisation problem. Using the $\ell_1$ norm yields the familiar lasso estimator.
+
 \begin{align*}
     \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda \sum_{j \neq k}\left|\Theta_{j k}\right|\right)
 \end{align*}
-  \end{itemize}
+
 \end{frame}
 
-\begin{frame}{$\lambda$ in the Context of Networks}
-	\begin{itemize}
-		\item The penalty parameter determines the structure of the network.
-        \item Typical methods can be applied, e.g. cross validation
-	\end{itemize}
-    \begin{figure}
-   \centering
-\begin{tabular}{cc}
-    $\lambda = 0.05$ & $\lambda = 0.005$ \\
-    \pic{NetworkGraph_Alpha0.05_Layoutcircular.png} &  \pic{NetworkGraph_Alpha0.005_Layoutcircular.png} \\
-\end{tabular}
-\caption{Tuning $\lambda$, own calculations based on data from \cite{hallac2017network}}
-   % how to choose alpha?
-\label{static_lasso}
-\end{figure}
-    \end{frame}
 
 \begin{frame}{Challenge: The Network Structure Can Change Over Time}
     In many real world settings (e.g. financial markets) the structure of the complex system changes over time.
@@ -268,16 +299,6 @@
 
 \begin{frame}{Changing $\psi$}
 
-\end{frame}
-
-\begin{frame}{Extension: Cross Validation for $\psi$}
-
-\end{frame}
-
-\begin{frame}{Extension: Understanding Network Importance}
-    \begin{itemize}
-        \item The eigenvector centrality allows additional insight into the network's dynamic.
-    \end{itemize}
 \end{frame}
 
 \begin{frame}{References}
