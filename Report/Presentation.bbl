@@ -1,0 +1,90 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Friedman%
+, Hastie%
+\BCBL {}\ \BBA {} Tibshirani%
+}{%
+Friedman%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2008}}%
+}]{%
+friedman2008sparse}
+\APACinsertmetastar {%
+friedman2008sparse}%
+\begin{APACrefauthors}%
+Friedman, J.%
+, Hastie, T.%
+\BCBL {}\ \BBA {} Tibshirani, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2008}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Sparse inverse covariance estimation with the graphical
+  lasso} {Sparse inverse covariance estimation with the graphical
+  lasso}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Biostatistics}{9}{3}{432--441}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hallac%
+, Park%
+, Boyd%
+\BCBL {}\ \BBA {} Leskovec%
+}{%
+Hallac%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2017}}%
+}]{%
+hallac2017network}
+\APACinsertmetastar {%
+hallac2017network}%
+\begin{APACrefauthors}%
+Hallac, D.%
+, Park, Y.%
+, Boyd, S.%
+\BCBL {}\ \BBA {} Leskovec, J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2017}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Network inference via the time-varying graphical lasso}
+  {Network inference via the time-varying graphical lasso}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{}{}{}{205--213}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Page%
+, Brin%
+, Motwani%
+\BCBL {}\ \BBA {} Winograd%
+}{%
+Page%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1999}}%
+}]{%
+page1999pagerank}
+\APACinsertmetastar {%
+page1999pagerank}%
+\begin{APACrefauthors}%
+Page, L.%
+, Brin, S.%
+, Motwani, R.%
+\BCBL {}\ \BBA {} Winograd, T.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1999}{}{}.
+\newblock
+\APACrefbtitle {The PageRank citation ranking: Bringing order to the web.} {The
+  pagerank citation ranking: Bringing order to the web.}\
+  \APACbVolEdTR{}{\BTR{}}.
+\newblock
+\APACaddressInstitution{}{Stanford InfoLab}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
