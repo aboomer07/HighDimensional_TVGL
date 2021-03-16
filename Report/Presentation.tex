@@ -168,7 +168,7 @@ Any two subsets $S$ and $T$ are conditionally independent given a separating sub
 
 \begin{frame}{Gaussian Graphical Model}
 \begin{center}
-		\begin{tcolorbox}[width = 4.5in, interior hidden, boxsep = 0pt,
+		\begin{tcolorbox}[width = 4.5in, boxsep = 0pt,
 			left = 2pt, right = 2pt, top = 2pt]
 			\begin{align*}
 			X \sim \mathcal{N}(\mu, \Sigma)
@@ -265,22 +265,50 @@ Sparsity can be achieved by adding a penalty term to the optimisation problem. U
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Optimization Algorithm}
-    \begin{itemize}
-        \item The authors use the alternating direction method of multipliers (ADMM), a distributed convex optimization approach.
-        \item ADMM allows splitting the problem up into a series of sub-problems.
-        \item They then use a message-passing algorithm to converge on the globally optimal solution.
-        \item Making use of proximal operators they derive closed form solutions for each of the ADMM sub-problems.
-    \end{itemize}
+\begin{frame}{Optimization Algorithm: ADMM}
+	\begin{itemize}
+		\item The authors use ADMM (alternating direction method of multipliers) to solve the TVGL optimization problem.
+		\item ADMM is an general optimization technique that can be used on any convex optimization problem. 
+		\item ADMM has a couple main advantages compared to standard gradient descent based methods: (1) Can be applied to nonsmooth functions, (2) Can be distributed across multiple independent machines
+		\item To put ADMM into context, we show how it can be used to solve a generic optimization problem
+	\end{itemize}
 \end{frame}
 
+\begin{frame}{Optimization Algorithm: ADMM}
+\framesubtitle{General Example}
+We can take the generic minimization problem
+\[\underset{x}{argmin} \ f(x) \quad s.t. \ x \in \mathcal{C}\]
+And separate it into two functions, $f$ and $g$, where $g$ is the indicator of $\mathcal{C}$
+\[\underset{x}{argmin} \ f(x) + g(z) \quad s.t. \ x - z = 0\]
+\begin{center} The variable $z$ is known as a consensus variable, and the constraint ensures final convergence between $x$ and $z$ \end{center}
+
+% Updating algorithm:
+% \begin{align}
+% x^{k+1} &:=\underset{x}{\operatorname{argmin}}\left(f(x)+(\rho / 2)\left\|x-z^{k}+u^{k}\right\|_{2}^{2}\right) \\
+% z^{k+1} &:=\Pi_{\mathcal{C}}\left(x^{k+1}+u^{k}\right) \\
+% u^{k+1} &:=u^{k}+x^{k+1}-z^{k+1}
+% \end{align}
+\end{frame}
+
+\begin{frame}{Optimization Algorithm: ADMM}
+\framesubtitle{Proximal Operators/Proximal Gradient Descent}
+The generality of the ADMM optimization technique relies on the method of proximal gradient descent. Proximal gradient descent makes use of proximal operators, defined as:
+\[\operatorname{prox}_{\lambda f}(v)=\underset{x}{\operatorname{argmin}}\left(f(x)+(1 / 2 \lambda)\|x-v\|_{2}^{2}\right)\]
+The ADMM iteration based update method is:
+\begin{align} 
+\nonumber x^{k+1} &:=\underset{x}{\operatorname{argmin}}\left(f(x)+(\rho / 2)\left\|x-z^{k}+u^{k}\right\|_{2}^{2}\right) 
+\\ \nonumber z^{k+1} &:=\Pi_{C}\left(x^{k+1}+u^{k}\right) 
+\\ \nonumber u^{k+1} &:=u^{k}+x^{k+1}-z^{k+1} 
+\end{align}
+Iterations stop when $u^{k} \xrightarrow{} u^{k+1}$ ($x-z = 0$ constraint satisfied)
+\end{frame}
+
+% \begin{frame}{Optimization Algorithm: ADMM}
+% 	The LASSO regression optimization problem is:
+% \[\hat{\beta}_{\lambda} = \underset{\beta}{argmin} \sum_{i=1}^{N} (Y_{i} - X_{i} \beta)^{2} + \lambda \sum_{j=1}^{p} |\beta|\]
+% \end{frame}
+
 \begin{frame}{GlASSO vs. TVGL}
-  
-  % \begin{figure}
-  %   \includegraphics[width=8cm]{Static_Psi5_alpha0.18.png}
-  %   % \caption{}
-  %   % \label{fig:static5_0.18}
-  % \end{figure}
 
   \animategraphics[loop,controls,width=\linewidth]{1}{PrecMatsPsi5Alpha0.18Beta13TimeExpand}{0}{15}
 
