@@ -96,7 +96,6 @@
 
 \begin{document}
 
-
 \frame{\titlepage}
     
 
@@ -281,13 +280,6 @@ We can take the generic minimization problem
 And separate it into two functions, $f$ and $g$, where $g$ is the indicator of $\mathcal{C}$
 \[\underset{x}{argmin} \ f(x) + g(z) \quad s.t. \ x - z = 0\]
 \begin{center} The variable $z$ is known as a consensus variable, and the constraint ensures final convergence between $x$ and $z$ \end{center}
-
-% Updating algorithm:
-% \begin{align}
-% x^{k+1} &:=\underset{x}{\operatorname{argmin}}\left(f(x)+(\rho / 2)\left\|x-z^{k}+u^{k}\right\|_{2}^{2}\right) \\
-% z^{k+1} &:=\Pi_{\mathcal{C}}\left(x^{k+1}+u^{k}\right) \\
-% u^{k+1} &:=u^{k}+x^{k+1}-z^{k+1}
-% \end{align}
 \end{frame}
 
 \begin{frame}{Optimization Algorithm: ADMM}
@@ -303,17 +295,63 @@ The ADMM iteration based update method is:
 Iterations stop when $u^{k} \xrightarrow{} u^{k+1}$ ($x-z = 0$ constraint satisfied)
 \end{frame}
 
-% \begin{frame}{Optimization Algorithm: ADMM}
-% 	The LASSO regression optimization problem is:
-% \[\hat{\beta}_{\lambda} = \underset{\beta}{argmin} \sum_{i=1}^{N} (Y_{i} - X_{i} \beta)^{2} + \lambda \sum_{j=1}^{p} |\beta|\]
-% \end{frame}
+\begin{frame}{Optimization Algorithm: ADMM}
+\framesubtitle{TVGL ADMM Application Overview}
 
-\begin{frame}{GlASSO vs. TVGL}
+For the TVGL, the authors introduce 3 consensus variables: $(Z_{0}, Z_{1}, Z_{2})$
 
-  \animategraphics[loop,controls,width=\linewidth]{1}{PrecMatsPsi5Alpha0.18Beta13TimeExpand}{0}{15}
+\begin{enumerate}
+	\item $Z_{0}$ is the consensus variable for the $\Theta_{i}$ within $|\Theta_{i}|_{od, 1}$
+	\item $(Z_{1}, Z_{2})$ correspond to $(\Theta_{i}, \Theta_{i-1})$ within $\Psi(\Theta_{i} - \Theta_{i-1})$
+\end{enumerate}
+	
+The augmented lagrangian for the TVGL then is:
+
+\begin{align}
+\nonumber \mathcal{L}_{\rho}&(\Theta, Z, U) =\sum_{i=1}^{T}-l\left(\Theta_{i}\right)+\lambda\left\|Z_{i, 0}\right\|_{\text {od, } 1}+\beta \sum_{i=2}^{T} \psi\left(Z_{i, 2}-Z_{i-1,1}\right)
+\nonumber \\ &+(\rho / 2) \sum_{i=1}^{T}\left(\left\|\Theta_{i}-Z_{i, 0}+U_{i, 0}\right\|_{F}^{2}-\left\|U_{i, 0}\right\|_{F}^{2}\right)
+\nonumber \\ &+(\rho / 2) \sum_{i=2}^{T}\left(\left\|\Theta_{i-1}-Z_{i-1,1}+U_{i-1,1}\right\|_{F}^{2}-\left\|U_{i-1,1}\right\|_{F}^{2}\right.
+\nonumber \\ & \quad \quad \quad \quad \quad \left.+\left\|\Theta_{i}-Z_{i, 2}+U_{i, 2}\right\|_{F}^{2}-\left\|U_{i, 2}\right\|_{F}^{2}\right) \nonumber
+\end{align}
 
 \end{frame}
 
+\begin{frame}{Optimization Algorithm: ADMM}
+\framesubtitle{TVGL ADMM Application Overview}
+
+Finally, the update procedure for the $k^{th}$ iteration in the TVGL is
+
+\begin{align}
+  
+\end{align}
+(a) $\Theta^{k+1}:=\underset{\Theta \in S_{++}^{p}}{\operatorname{argmin}} \mathcal{L}_{\rho}\left(\Theta, Z^{k}, U^{k}\right)$
+(b) $\quad Z^{k+1}=\left[\begin{array}{c}Z_{0}^{k+1} \\ Z_{1}^{k+1} \\ Z_{2}^{k+1}\end{array}\right]:=\underset{Z_{0}, Z_{1}, Z_{2}}{\operatorname{argmin}} \mathcal{L}_{\rho}\left(\Theta^{k+1}, Z, U^{k}\right)$
+(c) $U^{k+1}=\left[\begin{array}{c}U_{0}^{k+1} \\ U_{1}^{k+1} \\ U_{2}^{k+1}\end{array}\right]:=\left[\begin{array}{c}U_{0}^{k} \\ U_{1}^{k} \\ U_{2}^{k}\end{array}\right]+\left[\begin{array}{c}\Theta^{k+1}-Z_{0}^{k+1} \\ \left(\Theta_{1+1}^{k+1}, \ldots, \Theta_{T-1}^{k+1}\right)-Z_{1}^{k+1} \\ \left(\Theta_{2}^{k+1}, \ldots, \Theta_{T}^{k+1}\right)-Z_{2}^{k+1}\end{array}\right]$. 
+
+\end{frame}
+
+\begin{frame}{Static LASSO vs. TVGL}
+\framesubtitle{Static Graphical LASSO}
+
+  \begin{figure}
+    \includegraphics[width=10cm]{Static_Psi5_alpha0.18.png}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{Static LASSO vs. TVGL}
+\framesubtitle{TVGL Perturbed Node}
+\begin{center}
+    \animategraphics[loop,height=8cm, width=10.5cm]{1}{PrecMatsPsi5Alpha0.18Beta13}{0}{15}
+\end{center}
+\end{frame}
+
+\begin{frame}{Static LASSO vs. TVGL}
+\framesubtitle{TVGL Smoothly Varying}
+\begin{figure}
+    \animategraphics[loop,height=8cm, width=10.5cm]{1}{PrecMatsPsi3Alpha0.18Beta13}{0}{15}
+\end{figure}
+\end{frame}
 
 \begin{frame}{Importance of $\psi$}
     \begin{itemize}
@@ -321,11 +359,39 @@ Iterations stop when $u^{k} \xrightarrow{} u^{k+1}$ ($x-z = 0$ constraint satisf
         \item No a priori decision possible
         \item $\psi$ is fixed over time
     \end{itemize}
-    We illustrate the importance of the choice of $\psi$ by replicating the author's case studies with different
-    penalty functions.
+    We illustrate the importance of the choice of $\psi$ by comparing the author's choice of the Perturbed Node penalty function to the other two penalties
 \end{frame}
 
 \begin{frame}{Changing $\psi$}
+\framesubtitle{Temporal Deviation of Precision Matrix}
+
+\begin{figure}
+  \includegraphics[width=10cm]{TemporalDevPsi1_3_5Alpha0.18Beta13.png}
+  \caption{Temporal Deviation Psi Comparison}
+  \label{fig:TempDev}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Changing $\psi$}
+\framesubtitle{Temporal Deviation of Precision Matrix}
+
+\begin{figure}
+  \includegraphics[width=10cm]{TemporalDevPsi1_3_5Alpha0.18Beta13TimeExpand.png}
+  \caption{Temporal Deviation Psi Comparison Expanded Timespan}
+  \label{fig:TempDevTimeExp}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Changing $\psi$}
+\framesubtitle{Temporal Deviation of Precision Matrix}
+
+\begin{figure}
+  \includegraphics[width=10cm]{TemporalDevPsi1_3_5Alpha0.18Beta13StockExpand.png}
+  \caption{Temporal Deviation Psi Comparison Expanded Stock Set}
+  \label{fig:TempDevStockExp}
+\end{figure}
 
 \end{frame}
 
