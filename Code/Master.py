@@ -31,6 +31,10 @@
 ################################################################################
 
 ################################################################################
+# Section 6: Comparing Psi Functions
+################################################################################
+
+################################################################################
 ########################## END TABLE OF CONTENTS ###############################
 ################################################################################
 
@@ -88,7 +92,7 @@ times_dict = {'OG':[], 'EXP':[]}
 stocks_dict = times_dict.copy()
 
 stocks_dict['OG'] = [2, 321, 30, 241, 48, 180]
-stocks_dict['EXP'] = stocks_dict['OG'].copy() + list(range(50, 75))
+stocks_dict['EXP'] = stocks_dict['OG'].copy() + list(range(50, 80))
 
 def timing_set(center, samplesPerStep_left, count_left, samplesPerStep_right, count_right ):
     time_set = []
@@ -230,7 +234,7 @@ def heats(penalty, alpha, beta, times_dict, stocks_dict, time_exp, stock_exp):
         ax[0].set_title('Precision Matrix: ' + dates[i])
         sns.heatmap(theta_diff[i], annot=True, xticklabels=stock_names, yticklabels=stock_names, ax=ax[1], vmin=min([theta_diff[i].min() for i in range(theta_diff.shape[0])]), vmax=max([theta_diff[i].max() for i in range(theta_diff.shape[0])]))
         ax[1].set_title('Delta Precision Matrix ' + dates[i])
-
+        plt.margins(0,0)
         plt.savefig(outputDir + "/" + pngfile + str(i) + ".png")
         plt.close()
 
@@ -303,10 +307,76 @@ def central(penalty, alpha, beta, times_dict, stocks_dict, time_exp, stock_exp, 
     vals['StockNames'] = vals['StockIndex'].map(stock_names)
     vals['Date'] = vals['Times'].map(dates)
 
-    return(vals)
+    # vals = vals[vals['StockNames'] != 'MSFT']
 
-centrality = 'Katz'
-vals = central(3, 0.18, 13, times_dict, stocks_dict, False, False, centrality)
-sns.lineplot(x='Date', y=centrality, hue='StockNames', data=vals)
-plt.show()
+    # vals[centrality] = vals[centrality] / vals.groupby('StockIndex')[centrality].transform('first')
 
+    fig, ax = plt.subplots(1, 1)
+    sns.lineplot(x='Date', y=centrality, hue='StockNames', data=vals, ax=ax)
+    ax.set_title("Centrality Graph")
+
+    plt.savefig(pngfile + ".png")
+    plt.close()
+
+centrality = 'EigenVector'
+vals = central(5, 0.18, 13, times_dict, stocks_dict, False, False, centrality)
+
+################################################################################
+# Section 6
+################################################################################
+
+def penalty_viz(penalties, alpha, beta, times_dict, stocks_dict, time_exp, stock_exp):
+
+    pen_map = {'1' : 'Few_Edges', '2' : 'Global', '3' : 'Smooth_Vary', '4' : 'Block_Wise', '5' : 'Perturbed'}
+
+    with open(os.path.abspath(".") + "/Data/DataIndex.csv", 'r') as f:
+        df_index = f.read()
+
+    df_index = df_index.replace("\xa0", "").replace(" = ", ",")
+    split = re.search("(?<=\\n)..+(?=column 0)", df_index).span()[0]
+    rows = df_index[:(split - 1)].replace("row ", "")
+    cols = df_index[split:].replace("column ", "")
+
+    rows = pd.DataFrame([row.split(",") for row in rows.split("\n")])
+    rows.columns = ['Date', 'Row']
+    rows['Date'] = pd.to_datetime(rows['Date'].apply(lambda x: int(x[:-2])), format='%Y%m%d').astype(str)
+    rows = dict(zip(rows['Row'], rows['Date']))
+
+    cols = pd.DataFrame([col.split(",") for col in cols.split("\n")])
+    cols.columns = ['Ticker', 'Column']
+    cols = dict(zip(cols['Column'], cols['Ticker']))
+
+    times = times_dict[['OG', 'EXP'][time_exp]]
+    dates = [rows[str(i[0])] for i in times]
+
+    stocks = stocks_dict[['OG', 'EXP'][stock_exp]]
+    stock_names = [cols[str(i)] for i in stocks]
+
+    data = {}
+
+    for penalty in penalties:
+
+        currSuff = "Psi%s"%penalty + "Alpha%s"%alpha + "Beta%s"%beta + ["", "TimeExpand"][time_exp] + ["", "StockExpand"][stock_exp]
+
+        dev_file = "/Data/TempDev" + currSuff + ".npy"
+
+        data[str(penalty)] = np.load(os.getcwd() + dev_file)
+
+    data = pd.DataFrame.from_dict(data, orient='columns').unstack().reset_index().rename(columns={'level_0' : 'Penalty_Num', 'level_1' : 'Time', 0 : 'Temporal_Deviation'})
+    data['Penalty_Name'] = data['Penalty_Num'].map(pen_map)
+    data['Dates'] = data['Time'].map(dict(zip(range(len(times)), dates)))
+    data['Dates'] = pd.to_datetime(data['Dates'], format='%Y-%m-%d')
+    data = data[data['Time'] > 0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9, 6))
+    g = sns.lineplot(data=data, x='Dates', y='Temporal_Deviation', hue='Penalty_Name', ax=ax)
+    g.axes.set_yscale('log')
+    plt.xticks(rotation=15)
+    ax.set_title("Temporal Deviation Alpha=%s"%alpha + " Beta=%s"%beta + ["", " Expanded Time"][time_exp] + ["", " Expanded Stocks"][stock_exp])
+
+    currSuff = "Psi%s"%"_".join(map(str, penalties)) + "Alpha%s"%alpha + "Beta%s"%beta + ["", "TimeExpand"][time_exp] + ["", "StockExpand"][stock_exp]
+
+    pngfile = "TemporalDev" + currSuff
+
+    plt.savefig(pngfile + ".png")
+    plt.close()

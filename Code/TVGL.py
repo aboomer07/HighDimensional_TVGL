@@ -1,12 +1,13 @@
 import numpy as np
 import numpy.linalg as alg
-from inferGraphL1 import *
-from inferGraphL2 import *
-from inferGraphLaplacian import *
-from inferGraphinf import *
-from inferGraphPN import *
+from Code.inferGraphL1 import *
+from Code.inferGraphL2 import *
+from Code.inferGraphLaplacian import *
+from Code.inferGraphLinf import *
+from Code.inferGraphPN import *
 
-def TVGL(data, lengthOfSlice, lamb, beta, indexOfPenalty, verbose = False, eps = 3e-3, epsAbs = 1e-3, epsRel = 1e-3):        
+def TVGL(data, lengthOfSlice, lamb, beta, indexOfPenalty, verbose = False, eps = 3e-3, epsAbs = 1e-3, epsRel = 1e-3):
+
     # if indexOfPenalty == 1:
     #     print('Use l-1 penalty function')
     #     from inferGraphL1 import *

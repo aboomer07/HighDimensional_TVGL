@@ -137,11 +137,12 @@ Consider the following example:
 A graph clique $C \subseteq V$ is a fully-connected subset of the vertex set, i.e. $(s,t) \in E \forall s,t \in C$. \cite{hastie2015statistical}
 \begin{align*}
 	\mathbb{P}(A, B, C, D) &\propto \phi(A,B) \phi(B, C, D) \\
-	P(X) &= \frac{1}{Z} \prod_{c \in C} \phi c (x_c)
+	\mathbb{P}(X) &= \frac{1}{Z} \prod_{c \in C} \phi c (x_c)
 \end{align*}
+where $Z=\sum_{x \in X^{p}} \prod_{c \in C} \phi_{c}\left(x_{c}\right)$.
 \begin{figure}
 	\caption{Maximal Cliques}
-	\includegraphics[trim={2cm 18cm 10cm 35cm}, clip, width = 6.5cm]{graphs/IMG_0093}
+	\includegraphics[trim={2cm 18cm 10cm 36cm}, clip, width = 6.2cm]{graphs/IMG_0093}
 \end{figure}
 \end{frame}
 
@@ -152,7 +153,7 @@ Any two subsets $S$ and $T$ are conditionally independent given a separating sub
 \end{align*}
 \begin{figure}
 	\caption{Separating Set: $\{ B, C\}$}
-	\includegraphics[trim={2cm 2cm 10cm 32cm}, clip, width = 7cm]{graphs/IMG_0094}
+	\includegraphics[trim={2cm 8cm 8cm 16cm}, clip, width = 5cm]{graphs/IMG_0094}
 \end{figure}
 \end{frame}
 
@@ -169,6 +170,7 @@ Any two subsets $S$ and $T$ are conditionally independent given a separating sub
 \begin{center}
 		\begin{tcolorbox}[width = 4.5in, boxsep = 0pt,
 			left = 2pt, right = 2pt, top = 2pt]
+			$X$ follows a Gaussian distribution:
 			\begin{align*}
 			X \sim \mathcal{N}(\mu, \Sigma)
 			\end{align*}
@@ -176,7 +178,7 @@ Any two subsets $S$ and $T$ are conditionally independent given a separating sub
 \begin{align*}
 	f(x \mid \mu, \Sigma)=(2 \pi)^{-p / 2}(\operatorname{det} \Theta)^{1 / 2} e^{-(x-\mu)^{T} \Theta(x-\mu) / 2}
 \end{align*}
-where $\Theta=\Sigma^{-1}$ is the Precision matrix of the distribution.
+where $\Theta=\Sigma^{-1}$ is the \textbf{Precision matrix} of the distribution.
 		\end{tcolorbox}	
 \end{center}
 
@@ -185,13 +187,15 @@ Empirical covariance $S = \frac{1}{n-1} \sum_{i=1}^{n}\left(x_{i}-\mu\right)\lef
 \end{frame}
 
 \begin{frame}{Gaussian Graphical Model}
-	A multivariate Gaussian distribution can be represented by a Markov random field, i.e. an undirected graph $g = (V, E)$ with
-	\begin{itemize}
-		\item the vertex set $V = \{1, \cdots, p \}$ corresponding to the random variables and
-		\item the edge set $E = \left\{(i, j) \in V \mid i \neq j, \Theta_{i j} \neq 0\right\}$
-	\end{itemize}
+We can represent a multivariate Gaussian distribution as a graphical model.
+Whenever $X$ factorizes according to the graph $g$ we must have $\Theta_{st} = 0$ for any pair $(s,t) \notin E$. This gives a correspondence between the zero pattern of $\Theta$ and the edge structure of $g$.
+%	A multivariate Gaussian distribution can be represented by a Markov random field, i.e. an undirected graph $g = (V, E)$ with
+%	\begin{itemize}
+%		\item the vertex set $V = \{1, \cdots, p \}$ corresponding to the random variables and
+%		\item the edge set $E = \left\{(i, j) \in V \mid i \neq j, \Theta_{i j} \neq 0\right\}$
+%	\end{itemize}
 	\begin{figure}
-		\includegraphics[trim={0 2cm 0 0}, clip,width = 8cm]{IntroGraphMat}
+		\includegraphics[trim={0 1.4cm 0 0}, clip,width = 8cm]{IntroGraphMat}
 	\end{figure}
 \end{frame}
 
@@ -215,8 +219,10 @@ Empirical covariance $S = \frac{1}{n-1} \sum_{i=1}^{n}\left(x_{i}-\mu\right)\lef
 Sparsity can be achieved by adding a penalty term to the optimisation problem. Using the $\ell_1$ norm yields the familiar lasso estimator.
 
 \begin{align*}
-    \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda \sum_{j \neq k}\left|\Theta_{j k}\right|\right)
+    \hat{\Theta}=\operatorname{argmin}_{\Theta \geq 0}\left(\operatorname{tr}(S \Theta)-\log \operatorname{det}(\Theta)+\lambda\left\|\Theta \right\|_{\mathrm{od}, 1}\right)
 \end{align*}
+
+where $\left\|\Theta \right\|_{\mathrm{od}, 1}$ is the $\ell_1$-norm of the off-diagonal entries of $\Theta$.
 
 \end{frame}
 
@@ -226,8 +232,7 @@ Sparsity can be achieved by adding a penalty term to the optimisation problem. U
     % Intersecting time series analysis and network science allows detecting anomalies, spotting trends and forecasting future behavior.
     \begin{figure}
        \includegraphics[width=6cm]{network_evolution}
-       \caption{}
-       % \source{\cite(hallac2017network)}
+       \caption{Example of Changing Network Structure \cite{hallac2017network}}
        \label{fig:network_evolution}
   \end{figure}
 \end{frame}

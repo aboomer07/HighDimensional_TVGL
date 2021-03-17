@@ -1,6 +1,34 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
+Boyd%
+, Parikh%
+\BCBL {}\ \BBA {} Chu%
+}{%
+Boyd%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2011}}%
+}]{%
+boyd2011distributed}
+\APACinsertmetastar {%
+boyd2011distributed}%
+\begin{APACrefauthors}%
+Boyd, S.%
+, Parikh, N.%
+\BCBL {}\ \BBA {} Chu, E.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2011}.
+\newblock
+\APACrefbtitle {Distributed optimization and statistical learning via the
+  alternating direction method of multipliers} {Distributed optimization and
+  statistical learning via the alternating direction method of multipliers}.
+\newblock
+\APACaddressPublisher{}{Now Publishers Inc}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Friedman%
 , Hastie%
 \BCBL {}\ \BBA {} Tibshirani%
@@ -26,6 +54,29 @@ Friedman, J.%
   lasso}.{\BBCQ}
 \newblock
 \APACjournalVolNumPages{Biostatistics}{9}{3}{432--441}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Giraud%
+}{%
+Giraud%
+}{%
+{\protect \APACyear {2014}}%
+}]{%
+giraud2014introduction}
+\APACinsertmetastar {%
+giraud2014introduction}%
+\begin{APACrefauthors}%
+Giraud, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2014}.
+\newblock
+\APACrefbtitle {Introduction to high-dimensional statistics} {Introduction to
+  high-dimensional statistics}\ (\BVOL~138).
+\newblock
+\APACaddressPublisher{}{CRC Press}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -58,33 +109,31 @@ Hallac, D.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Page%
-, Brin%
-, Motwani%
-\BCBL {}\ \BBA {} Winograd%
+Hastie%
+, Tibshirani%
+\BCBL {}\ \BBA {} Wainwright%
 }{%
-Page%
+Hastie%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {1999}}%
+{\protect \APACyear {2015}}%
 }]{%
-page1999pagerank}
+hastie2015statistical}
 \APACinsertmetastar {%
-page1999pagerank}%
+hastie2015statistical}%
 \begin{APACrefauthors}%
-Page, L.%
-, Brin, S.%
-, Motwani, R.%
-\BCBL {}\ \BBA {} Winograd, T.%
+Hastie, T.%
+, Tibshirani, R.%
+\BCBL {}\ \BBA {} Wainwright, M.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{1999}{}{}.
+\APACrefYear{2015}.
 \newblock
-\APACrefbtitle {The PageRank citation ranking: Bringing order to the web.} {The
-  pagerank citation ranking: Bringing order to the web.}\
-  \APACbVolEdTR{}{\BTR{}}.
+\APACrefbtitle {Statistical learning with sparsity: the lasso and
+  generalizations} {Statistical learning with sparsity: the lasso and
+  generalizations}.
 \newblock
-\APACaddressInstitution{}{Stanford InfoLab}.
+\APACaddressPublisher{}{CRC press}.
 \PrintBackRefs{\CurrentBib}
 
 \end{thebibliography}
